@@ -4,6 +4,15 @@
  */
 
 /**
+ * Setup hook for adding custom cap
+ */
+function optimizely_admin_cap() {
+	$optimizely_admin_cap = apply_filters( 'optimizely_admin_cap', 'manage_options' );
+
+	return $optimizely_admin_cap;
+}
+
+/**
  * Display admin notices for the plugin.
  */
 function optimizely_admin_notices() {
@@ -35,7 +44,8 @@ add_action( 'admin_notices', 'optimizely_admin_notices' );
  * Add Optimizely to the admin menu.
  */
 function optimizely_admin_menu() {
-	add_menu_page( __( 'Optimizely', 'optimizely' ), __( 'Optimizely', 'optimizely' ), 'manage_options', 'optimizely-config', 'optimizely_conf', plugin_dir_url( __FILE__ ) . 'images/optimizely-icon.png' );
+
+	add_menu_page( __( 'Optimizely', 'optimizely' ), __( 'Optimizely', 'optimizely' ), optimizely_admin_cap() , 'optimizely-config', 'optimizely_conf', plugin_dir_url( __FILE__ ) . 'images/optimizely-icon.png' );
 }
 add_action( 'admin_menu', 'optimizely_admin_menu' );
 
@@ -58,8 +68,9 @@ add_filter( 'plugin_action_links', 'optimizely_plugin_action_links', 10, 2 );
  * Update the Optimizely configuration.
  */
 function optimizely_conf() {
+
 	if ( isset( $_POST['submit'] ) ) {
-		if ( ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( optimizely_admin_cap() ) ) {
 			die( __( 'Cheatin&#8217; uh?', 'optimizely' ) );
 		}
 		
